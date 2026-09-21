@@ -1,4 +1,3 @@
-// Lưu user vào file JSON đơn giản (đủ dùng cho đồ án, không cần database thật)
 const fs = require('fs');
 const path = require('path');
 const bcrypt = require('bcryptjs');
@@ -37,9 +36,6 @@ function findByPhone(phone) {
   return readUsers().find((u) => u.phone === String(phone || '').trim());
 }
 
-// identifier: có thể là username, email, hoặc số điện thoại. `type` cho biết
-// người dùng đã chọn loại nào ở màn hình login, để tra đúng field (tránh
-// trường hợp gõ số điện thoại nhưng lại được đem so khớp với cột username...).
 function findByIdentifier(identifier, type) {
   if (type === 'email') return findByEmail(identifier);
   if (type === 'phone') return findByPhone(identifier);
@@ -75,7 +71,6 @@ function verifyPassword(user, password) {
   return bcrypt.compareSync(password, user.passwordHash);
 }
 
-// Tự động tạo tài khoản admin đầu tiên nếu chưa có, dựa theo .env
 function ensureAdminSeed(adminUsername, adminPassword) {
   if (!adminUsername || !adminPassword) return;
   const existing = findByUsername(adminUsername);
