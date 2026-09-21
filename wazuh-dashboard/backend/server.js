@@ -1,6 +1,3 @@
-// Backend proxy: xác thực JWT + kết nối tới 2 nguồn dữ liệu của Wazuh
-//  - Wazuh Indexer (port 9200)  : lưu trữ alert, dùng basic auth
-//  - Wazuh Manager API (55000)  : agent, rule, dùng JWT token riêng của Wazuh
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -31,12 +28,9 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
 
 usersDb.ensureAdminSeed(ADMIN_USERNAME, ADMIN_PASSWORD);
 
-// Lưu trữ tập trung thông tin thiết bị trên RAM server
 const userDevicesMap = {};
-// Lưu trữ cờ bắt buộc đổi mật khẩu tạm khi đăng nhập
 const forcePasswordChangeMap = {};
 
-// ================= Validate định dạng =================
 const RE_USERNAME = /^[a-zA-Z0-9_]{3,20}$/;
 const RE_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const RE_PHONE_VN = /^(0|\+84)(3|5|7|8|9)[0-9]{8}$/; // số di động VN
@@ -49,7 +43,6 @@ function validatePassword(password) {
   return null;
 }
 
-// Sinh mật khẩu tạm thỏa mãn chính sách bảo mật
 function generateTempPassword() {
   const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
   const lower = 'abcdefghijkmnpqrstuvwxyz';
@@ -65,7 +58,6 @@ function generateTempPassword() {
 
 const httpsAgent = new https.Agent({ rejectUnauthorized: false });
 
-// ================= AUTH: JWT của app =================
 function signToken(user) {
   return jwt.sign({ sub: user.username, role: user.role }, JWT_SECRET, { expiresIn: '8h' });
 }
@@ -90,7 +82,6 @@ function requireAdmin(req, res, next) {
   next();
 }
 
-// ---------- Routes đăng ký / đăng nhập ----------
 app.post('/api/auth/register', (req, res) => {
   const { username, email, phone, password, deviceName, ipAddress } = req.body || {};
 
@@ -112,7 +103,6 @@ app.post('/api/auth/register', (req, res) => {
   try {
     const user = usersDb.createUser({ username, email, phone, password, role: 'user' });
     
-    // Ghi nhận thông tin thiết bị phục vụ bảng giám sát SOC
     userDevicesMap[user.username] = {
       deviceName: deviceName || `DESKTOP-${(user.username + '3IB1LUP').slice(0, 7).toUpperCase()}`,
       ipAddress: ipAddress || '192.168.1.105'
@@ -155,12 +145,11 @@ app.post('/api/auth/login', (req, res) => {
       email: user.email,
       phone: user.phone,
       role: user.role,
-      mustChangePassword // Báo cho frontend biết tài khoản có đang dùng pass tạm không
+      mustChangePassword 
     }
   });
 });
 
-// API Đổi mật khẩu mới cho tài khoản đang đăng nhập
 app.post('/api/auth/change-password', authMiddleware, (req, res) => {
   const { newPassword } = req.body || {};
   const passwordError = validatePassword(newPassword);
@@ -177,7 +166,6 @@ app.post('/api/auth/change-password', authMiddleware, (req, res) => {
       if (user) user.password = newPassword;
     }
 
-    // Gỡ cờ sau khi người dùng đã tự đặt mật khẩu mới thành công
     delete forcePasswordChangeMap[username];
 
     res.json({ success: true, message: 'Đổi mật khẩu thành công' });
