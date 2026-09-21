@@ -19,8 +19,8 @@
         <router-link to="/alerts" class="btn-primary">
           🚨 TRUNG TÂM CẢNH BÁO
         </router-link>
-        <a href="#demo-video" class="btn-secondary">
-          ▶️ XEM VIDEO DEMO
+        <a href="#pipeline-section" class="btn-secondary">
+          ⚡ QUY TRÌNH HOẠT ĐỘNG
         </a>
       </div>
 
@@ -91,35 +91,47 @@
       </div>
     </section>
 
-    <!-- 3. KIẾN TRÚC HỆ THỐNG & DEMO VIDEO -->
-    <section class="media-section" id="demo-video">
+    <!-- 3. KIẾN TRÚC HỆ THỐNG & QUY TRÌNH HOẠT ĐỘNG (ĐÃ BỎ VIDEO) -->
+    <section class="media-section" id="pipeline-section">
       <div class="section-heading">
-        <span class="hud-tag">DEMO & ARCHITECTURE // PROOF OF CONCEPT</span>
-        <h3>VIDEO TRÌNH DIỄN & QUY TRÌNH HOẠT ĐỘNG</h3>
+        <span class="hud-tag">SYSTEM ARCHITECTURE // DATA FLOW</span>
+        <h3>MÔ HÌNH KIẾN TRÚC & QUY TRÌNH BẢO MẬT PIPELINE</h3>
       </div>
 
       <div class="media-grid">
-        <!-- VIDEO DEMO EMBED / PLAYER -->
+        <!-- KHUNG GIÁM SÁT HẠ TẦNG THAY THẾ VIDEO -->
         <div class="video-box">
           <div class="video-header">
             <span class="terminal-dot red"></span>
             <span class="terminal-dot yellow"></span>
             <span class="terminal-dot green"></span>
-            <span class="video-title">SOC_ATTACK_SIMULATION_DEMO.MP4</span>
+            <span class="video-title">SOC_NODE_TOPOLOGY // ACTIVE_TELEMETRY</span>
           </div>
-          <!-- Có thể thay bằng thẻ <video> file mp4 thực tế trong public/ hoặc nhúng Youtube iframe -->
-          <div class="video-wrapper">
-            <iframe 
-              src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
-              title="Demo Video"
-              frameborder="0" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-              allowfullscreen
-            ></iframe>
+          <div class="topology-display">
+            <div class="topo-item">
+              <span class="topo-label">INGESTION ENGINE</span>
+              <strong class="text-cyan">WAZUH INDEXER (OPENSEARCH)</strong>
+              <span class="topo-sub">Port 9200 // SSL Active</span>
+            </div>
+            <div class="topo-item">
+              <span class="topo-label">MANAGER RULESET</span>
+              <strong class="text-green">DECODERS & ATT&CK RULES</strong>
+              <span class="topo-sub">Levels 1 - 15 Dynamic Mapping</span>
+            </div>
+            <div class="topo-item">
+              <span class="topo-label">MIDDLEWARE GATEWAY</span>
+              <strong class="text-purple">NODE.JS / EXPRESS JWT PROXY</strong>
+              <span class="topo-sub">RBAC dstuser Isolation Layer</span>
+            </div>
+            <div class="topo-item">
+              <span class="topo-label">USER INTERFACE</span>
+              <strong class="text-yellow">VUE 3 CYBERPUNK HUD</strong>
+              <span class="topo-sub">Real-Time Threat Level Badges</span>
+            </div>
           </div>
         </div>
 
-        <!-- SƠ ĐỒ LUỒNG DỮ LIỆU -->
+        <!-- SƠ ĐỒ LUỒNG DỮ LIỆU GIỮ NGUYÊN -->
         <div class="workflow-box">
           <h4 class="wf-title">LUỒNG HOẠT ĐỘNG PIPELINE:</h4>
           
@@ -169,7 +181,7 @@ import { currentUser } from '../auth'
   display: flex;
   flex-direction: column;
   gap: 40px;
-  font-family: var(--font-ui);
+  font-family: 'Consolas', monospace;
   color: #f8fafc;
   padding-bottom: 40px;
 }
@@ -351,7 +363,7 @@ import { currentUser } from '../auth'
   margin: 0;
 }
 
-/* 3. MEDIA & PIPELINE */
+/* 3. TOPOLOGY & PIPELINE */
 .media-grid {
   display: grid;
   grid-template-columns: 1.2fr 1fr;
@@ -369,6 +381,8 @@ import { currentUser } from '../auth'
   border: 1px solid rgba(59, 130, 246, 0.3);
   border-radius: 6px;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .video-header {
@@ -395,20 +409,47 @@ import { currentUser } from '../auth'
   margin-left: 6px;
 }
 
-.video-wrapper {
-  position: relative;
-  padding-bottom: 56.25%;
-  height: 0;
+.topology-display {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  padding: 24px 20px;
+  height: 100%;
+  box-sizing: border-box;
 }
 
-.video-wrapper iframe,
-.video-wrapper video {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+.topo-item {
+  background: rgba(6, 14, 26, 0.85);
+  border: 1px solid rgba(34, 211, 238, 0.2);
+  padding: 16px 14px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  justify-content: center;
 }
+
+.topo-label {
+  font-size: 9px;
+  color: #64748b;
+  letter-spacing: 0.8px;
+  font-weight: 700;
+}
+
+.topo-item strong {
+  font-size: 12.5px;
+  letter-spacing: 0.5px;
+}
+
+.topo-sub {
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+.text-cyan { color: #22d3ee; }
+.text-green { color: #4ade80; }
+.text-purple { color: #c084fc; }
+.text-yellow { color: #facc15; }
 
 .workflow-box {
   background: linear-gradient(180deg, rgba(13, 24, 38, 0.9) 0%, rgba(9, 16, 26, 0.95) 100%);
