@@ -39,38 +39,40 @@
 - **Custom SOC Middleware & GUI**:
   - **Backend (Node.js/Express)**: Interacts with the Indexer REST API, manages JWT authentication, and applies strict **Role-Based Access Control (RBAC)** to isolate logs (`data.dstuser` mapping for normal users vs. global visibility for administrators).
   - **Frontend (Vue 3 / Vite)**: Real-time Cyberpunk HUD dashboard mapping Wazuh rule levels into dynamic severity tiers (`LOW`, `MEDIUM`, `HIGH`, `CRITICAL`), foreign workstation detection, and forensic trace inspection.
+```text
 +-------------------------------------------------------------+
 |                    ATTACKER (Kali Linux)                    |
 +-------------------------------------------------------------+
-| (SSH Brute Force, Port Scan)
-v
+                               | (SSH Brute Force, Port Scan)
+                               v
 +-------------------------------------------------------------+
 |               PROTECTED ENDPOINT (Agent 001)                |
 |               [IP: 192.168.1.105 / Host: DESKTOP]           |
 |  - Log Collector (/var/log/auth.log, Event Viewer)          |
 |  - Wazuh Agent Daemon (Port 1514 Encrypted Queue)           |
 +-------------------------------------------------------------+
-|
-v
+                               |
+                               v
 +-------------------------------------------------------------+
 |                 WAZUH MANAGER & INDEXER                     |
 |  - Manager: Decoders & Ruleset Engine (Levels 1 - 15)        |
-|  - Indexer (Port 9200): Indexes wazuh-alerts-4.x-*        |
+|  - Indexer (Port 9200): Indexes wazuh-alerts-4.x-*          |
 +-------------------------------------------------------------+
-|
-v
+                               |
+                               v
 +-------------------------------------------------------------+
 |            CUSTOM SOC MIDDLEWARE (Node.js/Express)          |
 |  - JWT Authentication (Admin vs User Roles)                 |
-|  - RBAC Strict Query Filter: data.dstuser == req.user     |
+|  - RBAC Strict Query Filter: data.dstuser == req.user       |
 +-------------------------------------------------------------+
-|
-v
+                               |
+                               v
 +-------------------------------------------------------------+
 |             CUSTOM SOC DASHBOARD (Vue 3 Frontend)           |
 |  - Dynamic Threat Badges (LOW, MEDIUM, HIGH, CRITICAL)      |
 |  - Threat Scanner Modal & Digital Forensic Trace Inspection |
 +-------------------------------------------------------------+
+```
 ---
 
 ## 3. Standards & Compliance
