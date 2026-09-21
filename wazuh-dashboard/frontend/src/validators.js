@@ -1,8 +1,5 @@
-// Validate định dạng dùng chung cho Login / Register
-
 export const RE_USERNAME = /^[a-zA-Z0-9_]{3,20}$/
 export const RE_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-// Số di động Việt Nam, chấp nhận 0xxxxxxxxx hoặc +84xxxxxxxxx
 export const RE_PHONE_VN = /^(0|\+84)(3|5|7|8|9)[0-9]{8}$/
 
 export function isValidUsername(v) {
@@ -15,10 +12,6 @@ export function isValidPhone(v) {
   return RE_PHONE_VN.test(String(v || '').trim())
 }
 
-/**
- * Tính độ mạnh mật khẩu, trả về { score, label, color, percent }
- * score: 0 (rất yếu) -> 4 (rất mạnh)
- */
 export function passwordStrength(password) {
   const pwd = String(password || '')
   const rules = {
@@ -39,7 +32,7 @@ export function passwordStrength(password) {
   if (rules.lower && rules.upper) score++
   if (rules.digit) score++
   if (rules.special) score++
-  if (rules.length12 && score >= 3) score++ // thưởng thêm cho mật khẩu dài + đủ loại ký tự
+  if (rules.length12 && score >= 3) score++
 
   const levels = [
     { label: 'Rất yếu', color: '#ef4444' },
@@ -58,8 +51,6 @@ export function passwordStrength(password) {
   }
 }
 
-// Mật khẩu được coi là "đủ điều kiện" để đăng ký: tối thiểu 8 ký tự,
-// có chữ hoa, chữ thường, số, và ký tự đặc biệt (khớp với rule bên backend).
 export function isPasswordEligible(password) {
   const { rules } = passwordStrength(password)
   return !!(rules.length8 && rules.lower && rules.upper && rules.digit && rules.special)
