@@ -1,6 +1,4 @@
 import { getToken, logout } from './auth'
-
-// Để chuỗi rỗng để đi qua Vite proxy, giúp người dùng truy cập từ xa (Cloudflare Tunnel/LAN) không bị lỗi Failed to fetch
 const BACKEND_URL = ''
 
 export async function apiFetch(path, options = {}) {
