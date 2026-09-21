@@ -1,4 +1,3 @@
-# -Implement-the-Intrusion-Detection-System-IDS-with-Wazuh
 # 🛡️ Enterprise Host-based IDS & SIEM with Wazuh Architecture
 
 > **Implementation of an Intrusion Detection System (IDS) using Wazuh, Custom Real-time SOC Dashboard, and Role-Based Access Control (RBAC).**
