@@ -1,0 +1,40 @@
+[
+  {
+    "username": "admin",
+    "passwordHash": "$2b$10$Y07entJmEvI6sgIwitwouOu0GRMlCRFeC3wxAmyZeiI0LTrSHyxVW",
+    "role": "admin",
+    "createdAt": "2026-09-10T11:17:38.863Z"
+  },
+  {
+    "username": "quocduy",
+    "email": "nqd444@gmail.com",
+    "phone": "0361728377",
+    "passwordHash": "$2b$10$xmh7urihUXjIMeHQlmd7MufI485VHN6LOnAGbTDt01zcFMHRG8/Ri",
+    "role": "user",
+    "createdAt": "2026-09-14T08:56:31.832Z"
+  },
+  {
+    "username": "julius01",
+    "email": "thinhtran@gmail.com",
+    "phone": "0905082962",
+    "passwordHash": "$2b$10$CD.QlSQePUeY0yfKujVmWOWI/fqC4cOh5Jzo/.VsP5OknVUmS3KkC",
+    "role": "user",
+    "createdAt": "2026-09-14T09:45:08.069Z"
+  },
+  {
+    "username": "T123",
+    "email": "sibirek860@fandoe.com",
+    "phone": "0905123454",
+    "passwordHash": "$2b$10$W7JiFc3PKgZY3WY4iKuzouZrsRlRheHbw6CHKfzXfpGCyOzNXC1N.",
+    "role": "user",
+    "createdAt": "2026-09-17T11:28:06.832Z"
+  },
+  {
+    "username": "binh612003",
+    "email": "binhn7945@gmail.com",
+    "phone": "0789411483",
+    "passwordHash": "$2b$10$U4FxVyKlK32iJxScyJJVf.clwXt3ezDqRqbVdIjaw6RyS59D1SEd6",
+    "role": "user",
+    "createdAt": "2026-09-17T16:47:09.305Z"
+  }
+]
