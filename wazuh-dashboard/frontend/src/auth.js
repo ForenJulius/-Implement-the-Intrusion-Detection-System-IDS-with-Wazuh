@@ -1,6 +1,5 @@
 import { reactive, computed } from 'vue'
 
-// Để chuỗi rỗng để đi qua Vite proxy chuyển tiếp về backend 4000, không bị lỗi Failed to fetch khi truy cập từ xa[cite: 11]
 const BACKEND_URL = ''
 
 const state = reactive({
@@ -51,8 +50,6 @@ export function setMustChangePassword(val) {
   }
 }
 
-// Dùng khi user tự đổi username/email/phone của chính mình — backend trả về
-// token mới (vì token cũ ký với username cũ) và thông tin user mới nhất.
 export function updateSession(token, user) {
   state.token = token
   state.user = user
