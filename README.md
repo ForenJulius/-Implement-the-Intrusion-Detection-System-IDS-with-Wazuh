@@ -71,6 +71,8 @@ v
 |  - Dynamic Threat Badges (LOW, MEDIUM, HIGH, CRITICAL)      |
 |  - Threat Scanner Modal & Digital Forensic Trace Inspection |
 +-------------------------------------------------------------+
+---
+
 ## 3. Standards & Compliance
 The detection architecture and rule mappings align with leading cybersecurity frameworks:
 - **MITRE ATT&CK**: Maps host event anomalies to recognized adversary techniques (e.g., T1110 - Brute Force).
@@ -112,40 +114,49 @@ On the dedicated Linux host server (Ubuntu 20.04/22.04 LTS):
 # 1. Update package repositories
 sudo apt update && sudo apt upgrade -y
 sudo apt install -y curl apt-transport-https lsb-release gnupg2
+```
 
-# 2. Download the official Wazuh installation assistant
+2. Download the official Wazuh installation assistant
+```
 curl -sO [https://packages.wazuh.com/4.8/wazuh-install.sh](https://packages.wazuh.com/4.8/wazuh-install.sh)
 curl -sO [https://packages.wazuh.com/4.8/config.yml](https://packages.wazuh.com/4.8/config.yml)
+```
 
-# 3. Execute the automated single-node installation
+3. Execute the automated single-node installation
+```
 sudo bash ./wazuh-install.sh -a
+```
 Save the generated administrative credentials printed in the terminal output.
-
 Step 2: Install and Register the Wazuh Agent
 On the monitored client workstation (e.g., 192.168.1.105):
-
-Bash
-# 1. Import repository key and add sources
+1. Import repository key and add sources
+```
 curl -s [https://packages.wazuh.com/key/GPG-KEY-WAZUH](https://packages.wazuh.com/key/GPG-KEY-WAZUH) | gpg --no-default-keyring --keyring gnupg-ring:/usr/share/keyrings/wazuh.gpg --import && chmod 644 /usr/share/keyrings/wazuh.gpg
 echo "deb [signed-by=/usr/share/keyrings/wazuh.gpg] [https://packages.wazuh.com/4.x/apt/](https://packages.wazuh.com/4.x/apt/) stable main" | sudo tee -a /etc/apt/sources.list.d/wazuh.list
 sudo apt update
+```
 
-# 2. Install the agent and register to the Manager IP
+2. Install the agent and register to the Manager IP
+```
 sudo WAZUH_MANAGER="192.168.1.50" WAZUH_AGENT_NAME="DESKTOP-3IB1LUP" apt install wazuh-agent
-
-# 3. Enable and start the agent service
+```
+3. Enable and start the agent service
+```
 sudo systemctl daemon-reload
 sudo systemctl enable wazuh-agent
 sudo systemctl start wazuh-agent
+```
 Step 3: Run the Custom Node.js Backend
-Bash
-# Navigate to the backend directory
+Navigate to the backend directory
+```
 cd Project/wazuh-dashboard/backend
-
-# Install package dependencies
+```
+Install package dependencies
+```
 npm install
-
-# Configure environment variables
+```
+Configure environment variables
+```
 cat <<EOF> .env
 PORT=5000
 INDEXER_URL=https://localhost:9200
@@ -153,30 +164,34 @@ INDEXER_USER=admin
 INDEXER_PASSWORD=SecretPassword
 JWT_SECRET=CyberDefenseSecretKey2026_SecureKey
 EOF
-
-# Start the server
+```
+Start the server
+```
 npm run dev
 # or
 node server.js
+```
 Step 4: Run the Custom Vue 3 Frontend
-Bash
-# Open a new terminal tab and navigate to the frontend directory
+Open a new terminal tab and navigate to the frontend directory
+```
 cd Project/wazuh-dashboard/frontend
-
-# Install dependencies
+```
+Install dependencies
+```
 npm install
-
-# Start the frontend dev server
+```
+Start the frontend dev server
+```
 npm run dev
-Open the dashboard in your browser at: http://localhost:5173.
-
+```
+Open the dashboard in your browser at: ```http://localhost:5173```
 Step 5: System Verification
 Log in with Admin credentials: Verify global audit feeds and endpoint connectivity.
 
-Log in with user account T123:
+Log in with user account:
 
 Access Session Logs: Validate hostname and IP identity verification.
 
-Run Threat Scanner: Confirm that only alerts targeting T123 are visible.
+Run Threat Scanner: Confirm that only alerts targeting are visible.
 
 Verify that all severity tags display their corresponding labels (LOW, MEDIUM, HIGH, CRITICAL).
