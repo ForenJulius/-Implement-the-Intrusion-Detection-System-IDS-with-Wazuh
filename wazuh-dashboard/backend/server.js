@@ -33,7 +33,7 @@ const forcePasswordChangeMap = {};
 
 const RE_USERNAME = /^[a-zA-Z0-9_]{3,20}$/;
 const RE_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const RE_PHONE_VN = /^(0|\+84)(3|5|7|8|9)[0-9]{8}$/; // số di động VN
+const RE_PHONE_VN = /^(0|\+84)(3|5|7|8|9)[0-9]{8}$/;
 const RE_STRONG_PASSWORD = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
 function validatePassword(password) {
@@ -145,7 +145,7 @@ app.post('/api/auth/login', (req, res) => {
       email: user.email,
       phone: user.phone,
       role: user.role,
-      mustChangePassword 
+      mustChangePassword
     }
   });
 });
@@ -174,10 +174,6 @@ app.post('/api/auth/change-password', authMiddleware, (req, res) => {
   }
 });
 
-// Quên mật khẩu: không cần đăng nhập, nhưng phải xác minh ĐÚNG cả 3 thông tin
-// (username + email + số điện thoại) khớp với tài khoản đã đăng ký thì mới
-// cho đặt mật khẩu mới — tránh việc chỉ cần biết username là đổi được mật khẩu
-// người khác.
 app.post('/api/auth/forgot-password', (req, res) => {
   const { username, email, phone, newPassword } = req.body || {};
 
@@ -198,8 +194,6 @@ app.post('/api/auth/forgot-password', (req, res) => {
 
   const user = usersDb.findByIdentifier(username, 'username');
 
-  // Không tiết lộ cụ thể sai ở đâu (username/email/phone) — tránh lộ thông
-  // tin cho kẻ dò tìm tài khoản hợp lệ.
   const norm = (v) => String(v || '').trim().toLowerCase();
   const matched =
     user &&
@@ -212,7 +206,7 @@ app.post('/api/auth/forgot-password', (req, res) => {
 
   try {
     usersDb.updatePassword(user.username, newPassword);
-    delete forcePasswordChangeMap[user.username]; // nếu trước đó đang bị ép đổi pass tạm thì gỡ luôn, vì user vừa tự đặt pass mới
+    delete forcePasswordChangeMap[user.username];
     res.json({ success: true, message: 'Đặt lại mật khẩu thành công, vui lòng đăng nhập bằng mật khẩu mới' });
   } catch (err) {
     res.status(500).json({ error: 'Không thể đặt lại mật khẩu: ' + err.message });
@@ -222,11 +216,9 @@ app.post('/api/auth/forgot-password', (req, res) => {
 app.post('/api/scan/trigger', authMiddleware, async (req, res) => {
   try {
     const scanMust = [
-      { range: { 'rule.level': { gte: 1 } } }, // Hiển thị từ level 3 trở lên để không bị trống modal
-      //  { range: { timestamp: { gte: 'now-24h' } } },
+      { range: { 'rule.level': { gte: 1 } } },
     ];
 
-    // Phân quyền cho modal Quét lỗ hổng: User thường chỉ thấy cảnh báo tấn công vào chính mình
     if (req.user.role !== 'admin') {
       scanMust.push({
         bool: {
@@ -247,8 +239,8 @@ app.post('/api/scan/trigger', authMiddleware, async (req, res) => {
         query: {
            bool: {
              must: scanMust,
-  },
-},
+          },
+        },
       },
       {
         httpsAgent,
@@ -267,7 +259,7 @@ app.post('/api/scan/trigger', authMiddleware, async (req, res) => {
         ruleDescription: src.rule?.description || 'Không có mô tả',
         level: src.rule?.level || 0,
         srcIp: src.data?.srcip || null,
-        targetUser: src.data?.dstuser || 'Hệ thống / Chung', // Admin thấy rõ user nào bị tấn công
+        targetUser: src.data?.dstuser || 'Hệ thống / Chung',
       };
     });
     res.json({ scannedAt: new Date().toISOString(), findings, total: findings.length });
@@ -281,8 +273,6 @@ app.get('/api/auth/me', authMiddleware, (req, res) => {
   res.json({ user: req.user });
 });
 
-// ---------- Người dùng tự xem/sửa thông tin cá nhân của chính mình ----------
-// Đổi username/email/phone bắt buộc phải nhập đúng mật khẩu hiện tại để xác nhận.
 app.get('/api/profile', authMiddleware, (req, res) => {
   const user = usersDb.findByUsername(req.user.username);
   if (!user) return res.status(404).json({ error: 'Không tìm thấy tài khoản' });
@@ -327,8 +317,6 @@ app.patch('/api/profile', authMiddleware, (req, res) => {
       usersDb.updatePhone(user.username, value);
     }
 
-    // Nếu đổi username, token JWT cũ (chứa username cũ) sẽ không còn đúng nữa
-    // -> cấp lại token mới ngay để frontend không bị văng ra đăng nhập lại.
     const updatedUser = usersDb.findByUsername(field === 'username' ? value : user.username);
     const token = signToken(updatedUser);
     res.json({
@@ -362,7 +350,6 @@ app.post('/api/profile/change-password', authMiddleware, (req, res) => {
   res.json({ success: true, message: 'Đổi mật khẩu thành công' });
 });
 
-// ---------- Quản lý user (chỉ admin) ----------
 app.get('/api/users', authMiddleware, requireAdmin, (req, res) => {
   const baseUsers = usersDb.listUsersSafe();
   const mergedUsers = baseUsers.map(u => ({
@@ -373,7 +360,6 @@ app.get('/api/users', authMiddleware, requireAdmin, (req, res) => {
   res.json({ users: mergedUsers });
 });
 
-// Reset mật khẩu tạm thời cho người dùng (Chỉ Admin)
 app.post('/api/users/:username/reset-password', authMiddleware, requireAdmin, (req, res) => {
   const { username } = req.params;
   const user = usersDb.findByIdentifier(username, 'username');
@@ -390,7 +376,6 @@ app.post('/api/users/:username/reset-password', authMiddleware, requireAdmin, (r
       user.password = tempPassword;
     }
 
-    // Bật cờ ép buộc đổi mật khẩu khi user đăng nhập bằng pass tạm này
     forcePasswordChangeMap[username] = true;
 
     res.json({
@@ -425,7 +410,6 @@ app.delete('/api/users/:username', authMiddleware, requireAdmin, (req, res) => {
   res.json({ success: true });
 });
 
-// ================= Wazuh Manager API =================
 let cachedToken = null;
 let tokenExpiresAt = 0;
 
@@ -466,7 +450,6 @@ function logManagerError(label, err) {
   }
 }
 
-// ---------- Alerts (Indexer) ----------
 app.get('/api/alerts', authMiddleware, async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -479,9 +462,6 @@ app.get('/api/alerts', authMiddleware, async (req, res) => {
     ];
     if (agentName) must.push({ wildcard: { 'agent.name': { value: `*${agentName}*`, case_insensitive: true } } });
 
-    // Phân quyền theo vai trò người dùng:
-    // User thường chỉ xem các cảnh báo nhắm tới username của chính họ.
-    // Admin xem được tất cả các cảnh báo của mọi user và admin/root.
     if (req.user.role !== 'admin') {
       must.push({
         bool: {
@@ -523,7 +503,7 @@ app.get('/api/alerts', authMiddleware, async (req, res) => {
         level: src.rule?.level || 0,
         groups: src.rule?.groups || [],
         fullLog: src.full_log || '',
-        targetUser: src.data?.dstuser || 'Hệ thống / Chung', // Trả về tài khoản đích để Admin biết rõ ai bị tấn công
+        targetUser: src.data?.dstuser || 'Hệ thống / Chung',
       };
     });
 
@@ -559,7 +539,6 @@ app.get('/api/stats/severity', authMiddleware, async (req, res) => {
   }
 });
 
-// ---------- Agents / Rules (Manager API) ----------
 app.get('/api/agents', authMiddleware, requireAdmin, async (req, res) => {
   try {
     const data = await managerGet('/agents', { limit: 100 });
@@ -609,7 +588,6 @@ app.get('/api/rules', authMiddleware, requireAdmin, async (req, res) => {
   }
 });
 
-// ================= HỆ THỐNG LƯU TRỮ TIN NHẮN REAL-TIME CHO BLUE_TEAM_COMMS =================
 const chatMessages = [];
 
 app.post('/api/comms/messages', authMiddleware, (req, res) => {
