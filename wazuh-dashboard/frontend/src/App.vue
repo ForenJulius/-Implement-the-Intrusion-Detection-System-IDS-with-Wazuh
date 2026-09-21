@@ -6,7 +6,6 @@
   </div>
 
   <div v-else class="shell soc-command-shell">
-    <!-- MODAL BẮT BUỘC ĐỔI MẬT KHẨU MỚI NẾU TÀI KHOẢN ĐANG DÙNG PASS TẠM -->
     <div v-if="user?.mustChangePassword" class="force-pwd-backdrop">
       <div class="hud-frame force-pwd-modal">
         <span class="bracket tl"></span>
@@ -116,7 +115,6 @@
       <div class="bg-cyber-grid"></div>
       <div class="screen-scanline"></div>
 
-      <!-- Topbar Header -->
       <header class="topbar soc-topbar">
         <div class="topbar-laser-scan"></div>
 
@@ -137,7 +135,6 @@
         </div>
 
         <div class="topbar-actions">
-          <!-- NÚT QUÉT LỖ HỔNG / THREAT SCANNER -->
           <button
             class="soc-scan-trigger"
             :class="{ scanning: isScanning }"
@@ -148,7 +145,6 @@
             <span>{{ isScanning ? 'ĐANG QUÉT MỐI ĐE DỌA...' : 'QUÉT LỖ HỔNG / THREAT SCAN' }}</span>
           </button>
 
-          <!-- Ping & DEFCON -->
           <div class="telemetry-capsule">
             <div class="ping-block">
               <span class="ping-signal"></span>
@@ -158,7 +154,6 @@
             <span class="defcon-lvl">DEFCON 4</span>
           </div>
 
-          <!-- User Info & Logout -->
           <div class="user-identity-box">
             <div class="user-hex-avatar">{{ initials }}</div>
             <div class="user-desc">
@@ -174,7 +169,6 @@
         </div>
       </header>
 
-      <!-- Khung hiển thị tiến trình quét (Scanner Radar Overlay) -->
       <div v-if="isScanning" class="scan-progress-banner">
         <div class="scanner-anim-line"></div>
         <div class="banner-content">
@@ -185,7 +179,6 @@
       </div>
 
       <main class="soc-content-area">
-        <!-- Bọc hiệu ứng chuyển cảnh mềm mại dạng HUD Hologram cho mọi trang -->
         <router-view v-slot="{ Component }">
           <transition name="soc-page" mode="out-in">
             <component :is="Component" />
@@ -195,7 +188,6 @@
 
       <SocChatbox :current-user="user" :is-admin="admin" />
 
-      <!-- Modal kết quả quét (thay cho alert() thô của trình duyệt) -->
       <div v-if="showScanResult" class="scan-modal-overlay" @click.self="closeScanResult">
         <div class="scan-modal">
           <div class="scan-modal-header">
@@ -260,7 +252,6 @@ const authMessage = ref('')
 const latency = ref(16)
 let latencyInterval = null
 
-// Form đổi mật khẩu bắt buộc
 const newPassword = ref('')
 const confirmPassword = ref('')
 const showNewPassword = ref(false)
@@ -268,7 +259,6 @@ const showConfirmPassword = ref(false)
 const pwdError = ref('')
 const submitting = ref(false)
 
-// Scanner state
 const isScanning = ref(false)
 const scanProgress = ref(0)
 const showScanResult = ref(false)
@@ -318,7 +308,6 @@ async function submitNewPassword() {
     const data = await res.json()
     if (!res.ok) throw new Error(data.error || 'Đổi mật khẩu thất bại')
 
-    // Tắt modal và mở khóa dashboard cho người dùng
     setMustChangePassword(false)
     newPassword.value = ''
     confirmPassword.value = ''
@@ -412,7 +401,6 @@ body {
 .soc-command-shell { display: flex; min-height: 100vh; }
 .auth-wrapper { min-height: 100vh; background: var(--bg); }
 
-/* VÙNG MODAL KHÓA MÀN HÌNH BẮT BUỘC ĐỔI MẬT KHẨU */
 .force-pwd-backdrop {
   position: fixed;
   inset: 0;
@@ -557,7 +545,6 @@ body {
 }
 .btn-confirm-pwd:disabled { opacity: 0.5; cursor: not-allowed; }
 
-/* VIEWPORT CHÍNH */
 .soc-viewport {
   position: relative;
   flex: 1;
@@ -582,7 +569,6 @@ body {
   z-index: -1; pointer-events: none; opacity: 0.6;
 }
 
-/* Topbar Header */
 .soc-topbar {
   display: flex; align-items: center; justify-content: space-between;
   margin-bottom: 20px; padding: 14px 20px;
@@ -605,7 +591,6 @@ body {
 
 .topbar-actions { display: flex; align-items: center; gap: 12px; }
 
-/* Threat Scanner Button */
 .soc-scan-trigger {
   background: rgba(34, 211, 238, 0.1);
   border: 1px solid #22d3ee;
@@ -658,7 +643,6 @@ body {
   font-size: 11.5px; color: #fde68a; font-weight: 700;
 }
 
-/* Telemetry & User */
 .telemetry-capsule {
   display: flex; align-items: center; gap: 8px;
   background: rgba(5, 12, 22, 0.85); border: 1px solid rgba(148, 190, 255, 0.15);
@@ -767,7 +751,6 @@ body {
 }
 .scan-modal-ok:hover { filter: brightness(1.15); box-shadow: 0 0 16px rgba(34, 211, 238, 0.4); }
 
-/* ================= HIỆU ỨNG CHUYỂN TRANG HOLOGRAM FADE ================= */
 .soc-page-enter-active,
 .soc-page-leave-active {
   transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
